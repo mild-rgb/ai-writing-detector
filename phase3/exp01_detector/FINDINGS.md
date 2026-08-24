@@ -318,3 +318,69 @@ The bag-of-words floor it was indistinguishable from in domain (0.9993 vs
 **This is not a general detector.** It is a very good ELI5-corpus detector whose
 confidence does not survive the domain boundary, and whose in-domain agreement
 with a trivial model was not evidence of any transferable signal.
+
+
+---
+
+## Wider OOD probe, 24 Aug 2026 — it generalises across domain, not across model vintage
+
+Seven out-of-domain sets scored in one pass with the published checkpoint
+(`binary|norm`, mean pooling, max_length 2048), preprocessing parity asserted
+against `run_record_meta.json`. Labels recorded, never used to score. Artifacts:
+`phase3/study/_ood_scored_20260824/` (`report.json`, `summary.txt`, per-set raw
+scores, `analyse.py`) — kept locally, gitignored, so the code repo stays data-free.
+
+Five sets are new. Two — AI fiction and human fiction — are the earlier probe's
+material rescored alongside them.
+
+| set | what it is | n | metric | detector | bag-of-words |
+|---|---|---|---|---|---|
+| ood_stackexchange | human answers, 17 sites, pre-2022 | 240* | FPR | **0.00%** | 0.00% |
+| ood_ccnews | human news articles, 2017–18 | 240* | FPR | **1.67%** | 2.92% |
+| ood_human_wp | human fiction, pre-LLM r/WritingPrompts | 240* | FPR | **8.75%** | 6.67% |
+| ood_wildchat | AI, GPT-4 and GPT-3.5 | 240* | FN | **94.58%** | 96.25% |
+| ood_mage | AI, LLaMA / OPT / davinci / GLM / bloom | 240* | FN | **96.25%** | 93.75% |
+| ood_raid | AI, llama-chat and MPT | 240* | FN | **90.42%** | 91.67% |
+| ood_story | AI, 2026 models | 364 | FN | **16.21%** | 43.41% |
+
+`*` = a 240-document sample, `random.Random(20260824).sample`. `ood_story` is the
+complete set. 95% Wilson intervals are in `summary.txt`; at n=240 an observed 0%
+still admits a true rate up to about 1.6%.
+
+### The result in one sentence
+
+On every AI set written by an **older** model the detector misses roughly nine
+documents in ten and ties the bag-of-words floor. On the one AI set written by
+**2026** models it misses 16% against the floor's 43%. It did not learn "AI
+writing"; it learned what the 2026 frontier sounds like, and that carries into a
+domain it has never seen but not backwards to how machines wrote in 2022.
+
+`ood_mage` makes the point most bluntly. Nineteen of its twenty-five generator
+slices have a **100% false-negative rate**, and sixteen of those nineteen have a
+mean p_ai below 0.001 — the detector is not hesitating on that text, it is
+confidently calling it human.
+
+### What it does not say
+
+- **These are sampled runs.** Three older-model sets at n=240 each. Clearly bad,
+  not precisely measured. A full-size re-run is still owed.
+- **They confound two shifts.** Each older-model set changes domain *and*
+  generator at once. Read them as "can it catch a generator it has never seen,"
+  not as frontier-detection performance. `ood_story` is the only 2026-generated
+  set and the only clean domain-shift-alone comparison.
+
+### What it does say about false positives
+
+Off distribution, the model is not drifting toward "AI" on human prose. Zero of
+240 Stack Exchange answers and 1.67% of news articles were flagged. Human fiction
+is the exception at 8.75%, but the bag-of-words floor is at 6.67% on the same
+documents, so the fiction register — not the model — is doing most of that work.
+The earlier full-set figure of 11.3% FPR on human fiction remains the conservative
+number to quote for the do-not-use-on-individuals warning.
+
+### Consequence for the claim on record
+
+The line "out of domain it genuinely generalises" was true of what had been
+measured and is too broad for what is measured now. The claim that survives is
+narrower and needs both halves: **it transfers across domain, and it does not
+transfer across model vintage.** The model card has been updated to say so.

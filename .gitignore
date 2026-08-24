@@ -28,6 +28,8 @@ models/
 *_scored.json
 results/results.jsonl
 results/*_scored.json
+_ood_scored_*/
+**/_ood_scored_*/
 
 # ── Caches, logs, junk ─────────────────────────────────────────────────────
 __pycache__/

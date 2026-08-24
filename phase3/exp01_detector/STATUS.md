@@ -266,3 +266,26 @@ stale generation-time metadata — but it is a live trap for anything that reads
 Also noted: `answers_failures.jsonl` holds empty-completion failures,
 Nemotron-only so far. Generator counts therefore end up slightly uneven; the
 counts are recorded per generator per split in `dataset_card.json`.
+
+## OOD eval — done, 24 Aug 2026 (sampled)
+
+The published checkpoint was scored on seven out-of-domain sets on a Colab T4 via
+`score_external.py`, which asserts preprocessing parity against
+`run_record_meta.json`. Output in `phase3/study/_ood_scored_20260824/`, which is
+kept locally and gitignored rather than committed.
+
+The headline: **it generalises across domain, not across model vintage.** On AI
+text from older models (GPT-4 and earlier) it misses 90–96% and ties the
+bag-of-words floor; on the one set written by 2026 models it misses 16% against
+the floor's 43%. False positives on human prose are low — 0 of 240 Stack Exchange
+answers, 1.67% of news — with human fiction the exception at 8.75%, where the
+floor is nearly as high.
+
+Two things this run does not settle, both open:
+
+- Six of the seven sets were scored on a 240-document sample, a time-budget
+  decision. **A full-size re-run is outstanding.**
+- The older-model sets shift domain and generator together, so they cannot
+  separate the two. A same-domain, older-generator set would.
+
+Full write-up and the per-generator breakdown are in `FINDINGS.md`.

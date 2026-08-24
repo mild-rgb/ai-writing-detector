@@ -20,4 +20,9 @@ behavior off distribution against the bag-of-words floor.
   words, label:"human", text}`. Companion `chunks.jsonl.bow.json` holds the BoW
   floor's per-document p_ai.
 - **BoW floor:** flags 0.5% of these human docs as AI at threshold 0.5.
+- **Detector result (24 Aug 2026, 240-doc sample):** the detector flagged **none**
+  of them — 0 false positives out of 240, and 0 on every one of the 17 sites. At
+  that sample size the true rate could still be as high as about 1.6%, so read this
+  as "very low", not "exactly zero". Scored output in
+  `../_ood_scored_20260824/` (local only, not in the repo).
 - **Builder:** `scripts/build_ood_stackexchange.py` (seed 20260824, reproducible).

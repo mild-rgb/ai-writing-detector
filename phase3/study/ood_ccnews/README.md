@@ -15,4 +15,8 @@ to measure false-positive behavior off distribution against the bag-of-words flo
   label:"human", text}`. Companion `chunks.jsonl.bow.json` holds the BoW floor's
   per-document p_ai.
 - **BoW floor:** flags 2.5% of these human docs as AI at threshold 0.5.
+- **Detector result (24 Aug 2026, 240-doc sample):** **1.67% false positives**,
+  below the bag-of-words floor's 2.92% on the same documents. News register does
+  not push this detector toward "AI". Scored output in
+  `../_ood_scored_20260824/` (local only, not in the repo).
 - **Builder:** `scripts/build_ood_ccnews.py` (reads cached parquet, reproducible).

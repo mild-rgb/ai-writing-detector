@@ -521,10 +521,42 @@ Still open:
   (89 percent), and adjacent passages of one text flip the call (18 percent). It is
   a real detector carrying genuine transferable signal with unreliable confidence,
   not a setup-specific artifact.
+* Then a wider probe changed what "it generalizes" is allowed to mean. On 24
+  August 2026 seven out-of-domain sets were scored in one pass, five of them new:
+  guaranteed-human Stack Exchange answers and CC-News articles, and AI text from
+  older models — WildChat (GPT-4 and GPT-3.5), MAGE (LLaMA, OPT and the davinci
+  family), and RAID (llama-chat and MPT). The two fiction sets from the earlier
+  probe were rescored alongside them. On the human side the detector is quiet,
+  which is the good news: zero false alarms out of 240 Stack Exchange answers and
+  1.67 percent on news. Human fiction is the one high reading at 8.75 percent, but
+  the bag-of-words floor sits at 6.67 percent on the same documents, so that looks
+  like something about the fiction register rather than a fault in the model. On
+  the older-model side it is nearly blind. It
+  misses 94.6 percent of the WildChat AI text, 96.3 percent of MAGE, and 90.4
+  percent of RAID, and on all three it ties the bag-of-words floor (96.3, 93.8 and
+  91.7 percent missed). The one set it clearly wins on, missing 16.2 percent
+  against the floor's 43.4, is the AI fiction — the only one of the four written by
+  2026 models.
+* So the generalization claim needs a boundary drawn through it. The detector
+  transfers across subject matter and it does not transfer across model vintage. It
+  learned what the 2026 frontier sounds like, and text from 2022-era models does
+  not look like AI to it at all. "It generalizes" is true of the fiction result and
+  false of everything older, and the two were never the same claim.
+* Two honesty notes travel with those numbers. Each older-model set was scored on a
+  240-document sample rather than the whole set, so the figures are clearly bad but
+  not precisely measured, and a full-size re-run is still owed. And each of them
+  changes two things at once, a new domain and an older generator, so they answer
+  "can it catch a model it has never seen" rather than "how good is it on today's
+  models." The scored output, the per-model breakdowns and the Wilson intervals are
+  in phase3/study/_ood_scored_20260824/, which is kept locally and is not in the
+  repo.
 
 The one-line summary of phase 3: the corpus exists; the detector is perfect
-in-domain and, out of domain, a genuine detector (balanced accuracy 0.863, beating
-the bag-of-words floor at 0.745) that degrades and becomes untrustworthy at the
-single-document level. The earlier "does not generalize" reading came from
-concluding on the AI-only arm before the human control was measured, and is
-withdrawn.
+in-domain and, on new subject matter written by the same generation of models, a
+genuine detector (balanced accuracy 0.863, beating the bag-of-words floor at 0.745)
+that degrades and becomes untrustworthy at the single-document level — but on AI
+text from older models it misses around nine documents in ten and does no better
+than counting words. It generalizes across domain, not across model vintage. The
+earlier "does not generalize" reading came from concluding on the AI-only arm
+before the human control was measured, and is withdrawn; the narrower claim that
+replaces it is the vintage boundary, which was measured with both arms in place.
