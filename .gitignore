@@ -1,0 +1,41 @@
+# ── Secrets ─────────────────────────────────────────────────────────────
+.env
+*.env
+**/.env
+*.pem
+*credential*
+*secret*
+
+# ── Data (not redistributable: Reddit-derived corpus, news, benchmark text) ──
+*.jsonl
+*.parquet
+*.7z
+*.arrow
+story_full.txt
+phase*/data/raw/
+phase*/data/interim/
+
+# ── Model weights & tokenizer artifacts ────────────────────────────────────
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+models/
+**/hf_model/*.safetensors
+
+# ── Derived outputs / scores (regenerable from code) ───────────────────────
+*.bow.json
+*_scored.json
+results/results.jsonl
+results/*_scored.json
+
+# ── Caches, logs, junk ─────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.ipynb_checkpoints/
+.DS_Store
+env/
+.venv/
+venv/

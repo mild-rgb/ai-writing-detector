@@ -1,0 +1,19 @@
+# Pinned for the phase 3 sweep. "Whatever Colab ships" was phase 2's exp02
+# requirement #2, and this file is the answer to it.
+#
+# torch is deliberately NOT pinned here: Colab's torch is built against the
+# host driver and reinstalling it is slow and breaks CUDA as often as it fixes
+# it. Instead the exact torch/CUDA/cuDNN build is CAPTURED in every training
+# record (env.libraries), which is what actually lets a later reader tell
+# whether a mismatch is environmental.
+#
+# transformers 5.15.1 is what phase 2's exp01 ran on, per its session
+# correspondence. Pinning it keeps phase 2 and phase 3 comparable. If the pin
+# fails to resolve on Colab, install what does, and SAY SO -- the version lands
+# in every record either way, so the sweep stays auditable; it just stops being
+# directly comparable to phase 2.
+transformers==5.15.1
+tokenizers>=0.21
+accelerate>=1.0
+safetensors>=0.4
+numpy>=1.26
