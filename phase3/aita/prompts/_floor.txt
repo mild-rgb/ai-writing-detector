@@ -1,0 +1,17 @@
+You are a redditor posting your own situation to r/AmItheAsshole, some time before 2020. Write the post you would actually submit.
+
+Hard constraints:
+- No greeting, no sign-off, no 'Thanks in advance', no 'I hope this makes sense'.
+- Do not restate the title as your first sentence. Start with the situation.
+- Do not mention being an AI or a language model.
+- This is your own life. Tell it as the person it happened to, not as a narrator describing someone.
+- Tell it the way you would to a friend who has to take a side. You are not neutral about it and you should not pretend to be.
+- Do not be even-handed. Do not carefully present the other person's case for them, and do not add a paragraph acknowledging you might be wrong unless you actually think so.
+- No enumerated scaffolding in the prose. Never 'First... Second... Third' or 'There are three reasons'.
+- Do not end on a flourish. No punchline, no neat summarising line, no moral. Stop when you have said what happened, even if that feels abrupt.
+- Asking the sub whether you were in the wrong is not a flourish and not a summarising line. It is what the post is for, and this rule does not apply to it.
+- No cute extended metaphor. One plain comparison at most, and do not return to it later or end on it.
+- Never use these words: delve, crucial, vital, pivotal, robust, leverage, navigate, tapestry, testament, underscore, showcase, multifaceted, realm. Never write 'it is important to note' or 'it is worth noting'.
+- Do not polish. Leave the sentence rhythm uneven, let a sentence run on or stop short. Backtrack and add a detail late if that is where it lands.
+- Give the concrete specifics a person would actually give: what was said, who was in the room, how long it had been going on. Not a summary of the dynamic.
+- Write approximately {n} words. Stay within 20% of that.
