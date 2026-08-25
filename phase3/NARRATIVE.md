@@ -742,3 +742,67 @@ by comparison. Apostrophes are normalised before names are extracted now. It is
 worth noticing which way that error pointed: it flattered the AI. An error that
 makes your result look better is the kind you have to go looking for, because
 nothing about it feels wrong at the time.
+
+## 12. Which model wrote it, and what that says about the vintage gap
+
+Everything so far asked one question: is this human or machine. Having two corpora
+with seven named generators lets us ask a better-posed one. Given a document, which
+of the seven 2026 models wrote it — or was it a person? That is an eight-way
+question with a chance rate of 12.5 percent, and it turns out to be answerable.
+
+All the numbers here come from bag-of-words, the trivial floor this project keeps
+returning to: word and punctuation presence, logistic regression, no GPU. They are
+reproduced by `phase3/scripts/attribution.py`, which runs on a laptop in about a
+minute. The transformer version is deferred and would likely do better, so read
+these as a floor rather than a ceiling.
+
+**Attribution works.** Trained on both domains, the model names the author of a
+held-out document 91.3 percent of the time — 88.2 percent on ELI5, 92.9 percent on
+AITA, against a chance rate of 12.5. Seven models and a human class, roughly 828
+documents per model. Whatever these systems do to a sentence, they do consistently
+enough that counting words identifies them.
+
+**The cross-domain collapse was our own doing.** Trained on ELI5 alone and pointed
+at AITA, five of the seven fingerprints fall apart: gpt is recognised 10.4 percent
+of the time, glm 15.7, nemotron 20.8, deepseek 38.1, qwen 41.7. Two survive the
+move intact — grok at 97.3 percent and gemini at 91.3 — so a model's fingerprint
+can be domain-invariant, but most are not when only one domain is on offer. Add
+AITA to the training data and the same five jump to between 75 and 100 percent. The
+limit was in the training set, not in the models. This is the clearest argument yet
+for having built a second corpus.
+
+**Human is the cleanest cut in the whole picture.** The human class is recognised
+98.4 percent of the time on held-out text from both domains, and only 0.69 percent
+of machine documents leak into it. So human-versus-machine is a coarse, sturdy,
+domain-invariant boundary, while which-model-exactly is fine-grained and carries
+nearly all the error. deepseek is the least distinctive of the seven — at 75.3
+percent it is the one the others most often collapse into.
+
+**The headline: the gap is between eras, not between known and unknown models.**
+This is the result that changes how the earlier vintage finding should be read. Take
+one of the seven models, remove it from training entirely, and ask whether its text
+still gets caught. It does, 95.3 percent of the time on average. The held-out model
+is misattributed to one of its 2026 contemporaries rather than mistaken for a
+person. Evasion runs from 0.3 percent for grok to 17.4 percent for gpt.
+
+Set that against the same bag-of-words approach on older models, from the
+out-of-domain probe: it missed 96.3 percent of the GPT-4 and GPT-3.5 text, 93.8
+percent of the LLaMA and OPT text, and 91.7 percent of the llama-chat and MPT text.
+Same method, same floor. A model it has never seen from 2026 is caught nineteen
+times in twenty; a model from 2022 is missed nineteen times in twenty.
+
+So there is a shared signature across the 2026 frontier, and it generalises to
+models that were never in the training data. What does not generalise is the jump
+backwards across an era. That sharpens the earlier finding rather than replacing
+it: asking "is this AI" transfers to unseen models of the same generation, and
+fails across generations, which is a data problem with a data solution — older
+machine text in training. Asking "which model is this" is genuinely per-model, and
+is where the difficulty actually lives.
+
+Two things to keep in view. This is bag-of-words only. And AITA carries no stamped
+train/test split — its partition lives in a side file rather than on the records
+themselves — so the script uses a seeded 80/20 split by question for
+characterisation. That is a description of the corpus, not a canonical split, and
+the provenance gap behind it is worth closing: a fact about which split a document
+belongs to should live in exactly one place, which is the lesson the ELI5 corpus
+already taught once.
