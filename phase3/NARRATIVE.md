@@ -677,7 +677,7 @@ tell nobody had predicted. Asked to write a post about an argument with a
 neighbour, the models gave the neighbour a name. Real posters almost never do —
 they write "my neighbour" and leave it there. Gemini named someone in 84 percent
 of its posts, against about 11 percent for the humans writing on the same titles,
-and used "Sarah" in nearly one document in five. A real poster's most repeated
+and used "Sarah" in more than a third of them. A real poster's most repeated
 name shows up once in two hundred posts.
 
 This mattered more than it might look. A detector that learns "Sarah means
@@ -733,15 +733,29 @@ generator. Two models use it most of the time, four never use it at all. A poole
 average earned by models sitting on opposite sides of the human value is an
 artefact, not a match, and the project's own protocol says so.
 
-**A measurement bug worth recording.** The first pass at the naming analysis put
-"Ive" at the top of the human name list. That is "I've": a third of human posts get
-curly apostrophes applied, and stripping the apostrophe as punctuation leaves a
-capitalised word that looks like a name. It made the human class look more
-name-diverse than it is, which in turn made the machine concentration look milder
-by comparison. Apostrophes are normalised before names are extracted now. It is
-worth noticing which way that error pointed: it flattered the AI. An error that
-makes your result look better is the kind you have to go looking for, because
-nothing about it feels wrong at the time.
+**Two measurement bugs worth recording, and they point the same way.** The first
+pass at the naming analysis put "Ive" at the top of the human name list. That is
+"I've": a third of human posts get curly apostrophes applied, and stripping the
+apostrophe as punctuation leaves a capitalised word that looks like a name. It made
+the human class look more name-diverse than it is, which in turn made the machine
+concentration look milder by comparison. Apostrophes are normalised before names
+are extracted now.
+
+The second was a question of where we looked. Naming was first measured on the
+first thirty words of each document, the same window used for the scenario-diversity
+checks, and that window was wrong for this. Scenario choice happens in the opening
+sentences, so thirty words is the right place to look for it. Naming accumulates
+through a whole document, so thirty words is the wrong place. Measured on openers,
+gemini's problem looked like it was picking the same name too often. Measured on
+full documents, the problem was that it was naming anyone at all, in 84 percent of
+posts against a human 11. That changed what the fix had to be: a rule about which
+name to use would have left gemini naming a character in five posts out of six,
+which is why the draw is two-sided and sets the rate rather than the name.
+
+Both errors made the AI look better than it was — one by inflating the human
+baseline, the other by measuring in the wrong window. An error that flatters your
+own result is the kind you have to go looking for, because nothing about it feels
+wrong at the time.
 
 ## 12. Which model wrote it, and what that says about the vintage gap
 
