@@ -653,6 +653,12 @@ grok 414, nemotron 414. One prompt across all 2,900, no version split. Generated
 from the frozen assignment in `corpus_assignment.json`, drawn from the 6,153
 pool with dev, bench and heldout excluded.
 
+**Spend: $23.30 of generation**, summed from the `usage.cost` recorded on every
+call — corpus 2,900 docs $13.00, the two 1,049-doc early reads $4.78 and $4.53,
+pilot $0.09, dev $0.26, bench $0.32 and $0.31. Judging is on top. Recorded here
+because the answer files are gitignored, so the figure quoted in `NARRATIVE.md`
+§11 would otherwise have no source anyone reading the repo could check.
+
 ## The naming fix held at scale
 
 | generator | names someone | top name | its doc share |
