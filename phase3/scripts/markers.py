@@ -131,6 +131,11 @@ def main():
                     help="partition names from phase3/data/longform_partition.json")
     ap.add_argument("--human-corpus",
                     default=f"{ROOT}/phase1/data/interim/questions_longform.jsonl")
+    ap.add_argument("--partition",
+                    default=f"{ROOT}/phase3/data/longform_partition.json",
+                    help="partition json to resolve --human-ids against. The "
+                         "default is the ELI5 long-form split; the AITA "
+                         "sub-project passes its own.")
     ap.add_argument("--match-ai-ids", action="store_true",
                     help="restrict humans to the questions the ai set covers")
     ap.add_argument("--json", dest="json_out")
@@ -138,7 +143,7 @@ def main():
                     help="only print rows where |ai - human| exceeds this (pts)")
     a = ap.parse_args()
 
-    part = json.load(open(f"{ROOT}/phase3/data/longform_partition.json"))
+    part = json.load(open(a.partition))
     want = set()
     for name in a.human_ids:
         if name not in part:

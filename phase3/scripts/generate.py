@@ -129,6 +129,21 @@ def seeded(row_id, model, tag):
     return random.Random(f"{row_id}|{model}|{tag}").random()
 
 
+def draw_name(row_id, model, pool):
+    """Pick a character name, weighted by how often REAL posters used it.
+
+    Weighted rather than uniform on purpose. A uniform draw over a few hundred
+    names would give every document a near-unique name and land the corpus
+    *more* name-diverse than any real population -- phase 1's v4 overshoot in a
+    new place, where inverting a tell is as detectable as leaving it. Weighting
+    by the human counts reproduces the human distribution, mild recurrence and
+    all: John really is commoner than Wyatt.
+    """
+    names = [p["name"] for p in pool]
+    weights = [p["human_count"] for p in pool]
+    return random.Random(f"{row_id}|{model}|name").choices(names, weights)[0]
+
+
 # --- rate-matched post-processing ----------------------------------------
 # Each op takes (text, keep) where keep is the result of the per-document draw.
 # keep=True  -> ensure the feature is present at least once.
@@ -350,6 +365,9 @@ def build_system(template, rec, cfg, model):  # noqa: C901
               # the human answer's own paragraph count, before calibration, so
               # the emitted row can record target and ask separately
               "human_paras": paras}
+    pool = cfg.get("name_pool")
+    if pool:
+        fields["name"] = draw_name(rec["id"], model, pool)
     try:
         system = template.format(**fields)
     except KeyError as e:
@@ -366,10 +384,14 @@ def build_system(template, rec, cfg, model):  # noqa: C901
         # branch pins the observed rate to the drawn rate regardless of the
         # model's own tendency, which is the same keep/remove logic the
         # punctuation post-ops use.
-        if hit:
-            lines.append("- " + d["text"])
-        elif d.get("else_text"):
-            lines.append("- " + d["else_text"])
+        line = d["text"] if hit else d.get("else_text")
+        if line:
+            # Draw text may carry {name}; ELI5's does not, so this is a no-op
+            # there. Formatted only when a placeholder is present, so a literal
+            # brace in any other prompt cannot raise.
+            if "{" in line:
+                line = line.format(**fields)
+            lines.append("- " + line)
     # An exclusive draw, phase 1's artifact_for mechanism: at most one option
     # fires, drawn from a cumulative distribution rather than as independent
     # Bernoullis. Use it where the options are mutually exclusive descriptions

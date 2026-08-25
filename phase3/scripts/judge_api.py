@@ -65,7 +65,16 @@ def main():
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--retries", type=int, default=5)
     ap.add_argument("--temperature", type=float, default=1.0)
+    ap.add_argument("--instruction-file",
+                    help="replace the r/explainlikeimfive instruction with the "
+                         "text in this file. The AITA sub-project passes its "
+                         "own; it differs from the default ONLY in the domain "
+                         "nouns, so the instrument stays comparable.")
     a = ap.parse_args()
+
+    instruction = INSTRUCTION
+    if a.instruction_file:
+        instruction = open(a.instruction_file).read().strip()
 
     batches = sorted(glob.glob(f"{a.batch_dir}/batch_*.txt"))
     if not batches:
@@ -84,7 +93,7 @@ def main():
         body = open(path).read()
         payload = {"model": a.model, "temperature": a.temperature,
                    "max_tokens": 2000,
-                   "messages": [{"role": "system", "content": INSTRUCTION},
+                   "messages": [{"role": "system", "content": instruction},
                                 {"role": "user", "content": body}]}
         last = None
         for attempt in range(a.retries):
