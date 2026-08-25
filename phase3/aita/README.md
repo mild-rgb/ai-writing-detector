@@ -482,6 +482,32 @@ Note the mirror case: `gpt-5.6-luna-pro` writes 0.16 names per document against
 a human 0.23 and its "top name" is not a name at all. It under-names rather than
 over-naming. Absence and excess are both detectable.
 
+### The scope error that understated the whole problem
+
+The first report of this said "gemini uses Sarah in 19.3% of its documents". That
+number came from the 30-word openers, measured with the raw capitalisation
+heuristic. Both choices were wrong in the same direction.
+
+Re-measured on FULL documents with the curated name list, the picture changed
+shape rather than degree. The share of documents that name a person at all:
+gemini 84.0%, grok 56.0%, glm 51.3%, deepseek 40.9%, qwen 40.7%, nemotron 30.7%,
+gpt 12.7% — against a human 10.7%.
+
+**That changed what the fix had to be.** On the opener measurement the problem
+looked like name CHOICE — the same "Sarah" recurring — which a one-sided
+"if you name someone, call them X" would have addressed. On the full-document
+measurement the dominant problem is the naming RATE, and a one-sided draw would
+have fixed which name appeared while leaving gemini naming a character in five
+documents out of six. That is why the draw is two-sided.
+
+It also resolved the objection that a two-sided draw would hurt `gpt`, which
+under-names: gpt measured 12.7% against a human 10.7%, so a draw at the human
+rate leaves it where it is by construction, and no special case is needed.
+
+Scenario choice does happen in the opening sentences, so 30 words was the right
+window for the diversity measures. It is the wrong window for anything that
+accumulates through a document, and naming is one of those.
+
 ### The bug that nearly hid this
 
 The first run put "Ive" at the top of the human name list with 19 uses. That is
