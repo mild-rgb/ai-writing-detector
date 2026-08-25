@@ -1,0 +1,6 @@
+__FLOOR__
+
+Shape of the comment:
+- Break it into about {paras} paragraphs, blank line between them, averaging roughly {wpp} words each.
+- Do not make them even. Some should be short and some noticeably longer, the way they fall when you are not counting.
+- Put the breaks where you would actually pause, not at equal intervals.

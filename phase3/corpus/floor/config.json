@@ -1,0 +1,67 @@
+{
+ "mechanism": "floor",
+ "rates_from": "phase3/data/human_marker_rates.json (long-form human, dev+bench, n=130)",
+ "draws": [
+  {
+   "rate": 0.3231,
+   "text": "Italicise or bold one short phrase where you want emphasis, using asterisks the way reddit markdown does.",
+   "else_text": "Do not use any asterisks, bold or italics anywhere in this comment."
+  },
+  {
+   "rate": 0.0769,
+   "text": "Part of this is easier as a short numbered list. Use one, then go back to prose.",
+   "else_text": "Do not use a numbered list."
+  },
+  {
+   "rate": 0.0538,
+   "text": "Part of this is easier as a few dashed bullet points. Use them, then go back to prose.",
+   "else_text": "Do not use bullet points."
+  },
+  {
+   "rate": 0.0769,
+   "text": "Open with a one-line 'TL;DR' summary, then a blank line, then the full explanation.",
+   "else_text": "Do not open with a summary line."
+  },
+  {
+   "rate": 0.3615,
+   "text": "Put a question to the reader somewhere in this, the way you would if you were talking to them."
+  },
+  {
+   "rate": 0.1385,
+   "text": "End with a line beginning 'Edit:' that corrects or clarifies something you actually said above. It must refer to a detail that is really in your comment."
+  },
+  {
+   "rate": 0.5692,
+   "text": "Write this one in the first person."
+  },
+  {
+   "rate": 0.1077,
+   "text": "Hedge one claim in your own words, however you would actually say it. Do not use a stock disclaimer."
+  },
+  {
+   "rate": 0.0154,
+   "text": "Ground one claim in something you have seen or done yourself. Drop it in mid-thought, not as an opening credential."
+  },
+  {
+   "rate": 0.0231,
+   "text": "You do this for a living and you say so, briefly and in passing."
+  },
+  {
+   "rate": 0.1385,
+   "text": "You find some part of this a bit stupid and it shows. Blunt, dry, mild swearing is fine."
+  },
+  {
+   "rate": 0.2154,
+   "text": "Let one sentence end on an exclamation mark."
+  }
+ ],
+ "post": {
+  "em_dash": 0.0231,
+  "en_dash": 0.0,
+  "curly": 0.0385,
+  "ellipsis": 0.0077,
+  "double_space": 0.2769,
+  "lowercase_para": 0.0923
+ },
+ "note": "v6's register constraints with the em-dash prohibition and the first-person suppression converted to rate-matched draws, plus the LLM-lexicon blacklist. No structural instruction of any kind: the paragraph campaign was retired after v2 because every generation-side route to matching human paragraph structure pushed the models into an essayistic register that a judge found EASIER to catch (Haiku balanced accuracy 79.2% on the best-matched prompt against 57.3% on phase 1's ordinary one). Whitespace is normalised on the detector side at training time instead."
+}
