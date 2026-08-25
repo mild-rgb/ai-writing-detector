@@ -11,23 +11,27 @@ Findings, all reproduced below (BoW = binary word+punct presence, logistic
 regression, the same floor definition used elsewhere):
 
   1. ATTRIBUTION WORKS. Trained on both domains, BoW names which of 7 models wrote
-     a held-out document ~91% of the time (chance 12.5%), and it is domain-robust.
+     a held-out document 91.3% of the time (ELI5 88.2%, AITA 92.9%, chance 12.5%).
 
   2. IT IS THE TRAINING DOMAIN, NOT AN INHERENT LIMIT. Trained on ELI5 alone, five
      of seven models' fingerprints do NOT transfer to AITA (10-42% recall). Add
-     AITA to training and they jump to 78-99%. The cross-domain collapse was a
-     single-domain artifact.
+     AITA to training and the same five reach 75-100% (deepseek 75.3 is the floor,
+     grok 100.0 the ceiling). The cross-domain collapse was a single-domain
+     artifact.
 
-  3. HUMAN IS THE CLEANEST CUT. The human class is identified ~99% on held-out text
-     from both domains, with ~0.3% of AI leaking into it. Human/AI is coarse and
-     domain-invariant; which-model is fine and carries the error.
+  3. HUMAN IS THE CLEANEST CUT. The human class is identified 98.4% on held-out
+     text from both domains, with 0.69% of AI leaking into it. Human/AI is coarse
+     and domain-invariant; which-model is fine and carries the error.
 
   4. ERA-LOCKED, NOT MODEL-LOCKED (leave-one-model-out). Hold a 2026 model out of
-     training entirely and its text is STILL caught as AI ~96% of the time (it is
-     misattributed to another 2026 model, not called human). Older models, by
-     contrast, are called human 84-100% of the time. So there is a shared 2026-
-     frontier signature that generalises to unseen SAME-ERA models; the failure is
-     a boundary between eras, not between known and unknown models.
+     training entirely and its text is STILL caught as AI 95.3% of the time on
+     average (evasion 0.3% grok to 17.4% gpt) -- it is misattributed to another
+     2026 model, not called human. Compare the SAME BoW floor on older models in
+     the OOD probe, which missed 96.3% of GPT-4/3.5, 93.8% of LLaMA/OPT and 91.7%
+     of llama-chat/MPT. Like for like: this method catches an unseen 2026 model
+     19 times in 20 and misses a 2022 model 19 times in 20. So there is a shared
+     2026-frontier signature that generalises to unseen SAME-ERA models; the
+     failure is a boundary between eras, not between known and unknown models.
 
 NOTE ON SPLITS: ELI5 uses its stamped train/test split. AITA has no stamped split
 (its partition lives in a side file), so this uses a seeded 80/20 split by q_id for
@@ -125,4 +129,6 @@ for M in models:
     h = np.mean(p == "human"); ev.append(h)
     print(f"    {M:24}{h*100:>20.1f}%{(1-h)*100:>13.1f}%")
 print(f"    mean evasion (unseen 2026 model called human): {np.mean(ev)*100:.1f}%")
-print("    (older, pre-era models were called human 84-100% -- see OOD probe)")
+print("    (same BoW floor on OLDER models in the OOD probe missed 96.3% of")
+print("     GPT-4/3.5, 93.8% of LLaMA/OPT, 91.7% of llama-chat/MPT -- so this")
+print("     method catches an unseen 2026 model ~19/20 and misses a 2022 one ~19/20)")
