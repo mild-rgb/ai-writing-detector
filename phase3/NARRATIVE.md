@@ -563,9 +563,11 @@ replaces it is the vintage boundary, which was measured with both arms in place.
 
 ## 11. A second corpus, and what it is for
 
-This section describes work in progress. The AITA corpus does not exist yet. Its
-first third is generating as this is written, and the rest is held pending one
-check. What follows is where the work stands, not a finished result.
+**The corpus is complete.** 2,900 AI documents paired with 2,900 human posts,
+balanced across the seven generators — 415 each from deepseek and qwen, 414 from
+the other five — all produced by a single prompt with no version split.
+Generation cost $23.30. What follows is why it was built and what building it
+taught us, including the two things we got wrong on the way.
 
 The reason for a second corpus comes out of two numbers already on record. The
 wider out-of-domain probe showed the detector transfers across subject matter but
@@ -652,10 +654,11 @@ replaced by something that permits the canonical phrase without mandating it.
 generating 2,900 posts from seven models is that they will all write the same
 story. Most of that is answered by how generation works: the model sees only the
 title, so scenario diversity is inherited from 6,343 genuinely distinct human
-titles, with each model inventing the specifics. A small preview came back clean —
-the AI tracks its own title about as closely as the real posters do, no
-near-duplicate scenarios, and one mild per-model habit of reaching for the same
-character names.
+titles, with each model inventing the specifics. That held up when it was
+measured: every generator finds its own title again far more often than chance,
+between 56 and 166 times the random rate, so the scenarios really are coming from
+the real titles rather than from the models. But the check also found something we
+had not thought to look for, and it took two rounds of generation to deal with.
 
 Checking that cheaply turned out to be impossible, and the reason is worth keeping.
 The plan was to generate only the first thirty words of each document and compare
@@ -669,5 +672,73 @@ random third of the frozen question assignment rather than the first third by id
 because reddit ids sort by date and taking them in order would sample one narrow
 slice of time and make the scenarios look artificially alike.
 
-That generation is running now. The remaining two-thirds are held until the
-diversity result is in.
+**The models invent names, and people do not.** The first third came back with a
+tell nobody had predicted. Asked to write a post about an argument with a
+neighbour, the models gave the neighbour a name. Real posters almost never do —
+they write "my neighbour" and leave it there. Gemini named someone in 84 percent
+of its posts, against about 11 percent for the humans writing on the same titles,
+and used "Sarah" in nearly one document in five. A real poster's most repeated
+name shows up once in two hundred posts.
+
+This mattered more than it might look. A detector that learns "Sarah means
+machine" has learned nothing about writing at all. It is the same shallow word-level
+shortcut the banned-vocabulary list exists to remove, wearing a different hat. So
+it was worth a regeneration, and the fix was a two-sided draw: some documents are
+told to name a person, most are told not to, at the rate real posters do it. It
+worked. Gemini went from naming someone in 84 percent of posts to 9.9 percent.
+Across all seven models the rate is now 11.4 percent against a human 11.5, and no
+single name dominates in either class.
+
+**And the fix broke something else.** Told not to name anyone, the models say "my
+wife" again and again where a person would say it once and switch to "she". The
+density of relationship words went up by more than three quarters against the human
+class, and the models that suppress names hardest pay for it hardest. That is a
+worse tell than the one we closed, in the sense that it is cheaper to detect: it
+needs no list of names, just counting.
+
+The stopping rule had been written down before any of this, and it said one
+regeneration, then accept and report. The project owner took that branch. A third
+round was not run. The reasoning is that the debiasing step this corpus exists to
+support should absorb a shortcut of exactly this kind, and that chasing human
+behaviour through round after round of prompt edits is how you end up describing
+your own edits instead of people. So the repetition tell is in the corpus, and it
+is written down here rather than left for someone to find.
+
+**The length tripwire earned its keep.** Before the corpus was built, the
+per-generator length band looked wrong: measured on ten documents each, it ran from
+0.906 to 1.079 of the paired human length, and two more generators looked like they
+needed their constants refitted. The rule fixed in advance said report a wider band
+rather than fit a third constant, because fitting on ten documents fits noise. At
+414 documents per generator the band is 0.940 to 1.029, inside the ELI5 corpus's
+own published range to within 0.02. The width really was noise. This is the
+clearest evidence the project has produced that per-model constants are worth
+leaving alone.
+
+**One number needs reading carefully.** The finished corpus contains 28
+near-duplicate opener pairs across 2,900 documents, against zero in the human
+class. That sounds like the models recycling stories, and it is not. Every close
+pair was inspected. They are cases where two genuinely similar real titles — two
+posts about a loud upstairs neighbour, two about a Sunday dinner with the in-laws
+— produced similar openings. The humans given those same two titles wrote them
+differently; the models converged. So the finding is not that a model invents the
+same story twice. It is that where two real situations resemble each other, people
+still write them apart and machines do not. That is a uniformity signal, and it is
+mild — about one percent of documents are involved.
+
+**What is knowingly left in.** Two things, both reported rather than fixed. The
+relationship-word repetition described above is the larger. The second is that the
+canonical phrase "am I the asshole" is bimodal: pooled across models it sits at
+21.4 percent against a human 27.7, which looks like a good match and describes no
+generator. Two models use it most of the time, four never use it at all. A pooled
+average earned by models sitting on opposite sides of the human value is an
+artefact, not a match, and the project's own protocol says so.
+
+**A measurement bug worth recording.** The first pass at the naming analysis put
+"Ive" at the top of the human name list. That is "I've": a third of human posts get
+curly apostrophes applied, and stripping the apostrophe as punctuation leaves a
+capitalised word that looks like a name. It made the human class look more
+name-diverse than it is, which in turn made the machine concentration look milder
+by comparison. Apostrophes are normalised before names are extracted now. It is
+worth noticing which way that error pointed: it flattered the AI. An error that
+makes your result look better is the kind you have to go looking for, because
+nothing about it feels wrong at the time.
