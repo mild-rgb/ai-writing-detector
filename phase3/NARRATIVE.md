@@ -560,3 +560,114 @@ than counting words. It generalizes across domain, not across model vintage. The
 earlier "does not generalize" reading came from concluding on the AI-only arm
 before the human control was measured, and is withdrawn; the narrower claim that
 replaces it is the vintage boundary, which was measured with both arms in place.
+
+## 11. A second corpus, and what it is for
+
+This section describes work in progress. The AITA corpus does not exist yet. Its
+first third is generating as this is written, and the rest is held pending one
+check. What follows is where the work stands, not a finished result.
+
+The reason for a second corpus comes out of two numbers already on record. The
+wider out-of-domain probe showed the detector transfers across subject matter but
+not across model vintage. And in domain, a bag-of-words model reaches 0.9993 on the
+same test set the transformer scores 1.000 on. Read together, those say the
+detector may be leaning on plain word choice more than we would like — a lexical
+shortcut that happens to work, rather than a read on how the text was made.
+
+The plan for that is Product-of-Experts: train the transformer through a frozen
+bag-of-words model, so it is pushed to learn what the bag-of-words gets wrong, and
+then drop the bag-of-words at inference. This only works if the bag-of-words is
+imperfect. Ours is not — at 0.9993 in domain it is right about almost everything,
+so training against it would leave the transformer nothing to learn. The way out is
+to use a bag-of-words fitted on a *different* subreddit. Cross-applied, it is
+imperfect in a useful way, and that is the whole reason a second corpus is being
+built.
+
+That fixes one of the two problems and not the other. Product-of-Experts can push
+the detector off a lexical shortcut. It cannot teach it what a 2022 model sounds
+like, because nothing in the training data sounds like one. Vintage-blindness needs
+older-model AI text in training, which is a separate piece of work and is deferred.
+The current seven 2026 generators are what this corpus uses.
+
+**Why r/AmItheAsshole.** It was chosen for distance from ELI5 rather than
+similarity to it. ELI5 is explanatory question-and-answer; AITA is first-person
+narrative that ends by asking strangers for a verdict. If the two domains were
+close, a bag-of-words from one would behave on the other much as it does at home,
+and there would be nothing to cross-apply.
+
+**The human side has to be human by construction, and it is.** The source is AI2's
+Scruples Anecdotes, 32,766 AITA posts kept in their original casing with their
+reddit post ids. Scruples ships no dates, so they were recovered by interpolating
+the base36 post ids against a dated dump: every post lands on 6 April 2019 or
+earlier, years before ChatGPT. That is the same guarantee the ELI5 human class has,
+arrived at the same way — nobody has to be trusted about provenance.
+
+Two much larger AITA sets on Hugging Face were rejected, and the reason is worth
+recording. Both have fully lowercased post bodies. A human class that is entirely
+lowercase sitting against a normally-capitalised AI class would hand any detector a
+free shortcut, and removing exactly that kind of shortcut is what this project is
+for. The strict filter — mirroring phase 1's — leaves 6,343 posts with a median of
+391 words. The text used is the post body, and the model is given only the title.
+
+**The machinery was ported, the numbers were not.** The generator is the same floor
+prompt that produced the shipped ELI5 AI class, with the same rate-matched draws
+and the same per-model length calibration. One correction to the record while we
+are here: the prompt that shipped is the corpus floor, not any of the retired p1 to
+p6 adversarial prompts. What could not be carried over is the measurements. AITA
+writes nothing like ELI5 — first person appears in 99.2 percent of posts against
+ELI5's 56.9 — so every rate was measured again on the AITA human class. Reusing the
+ELI5 config would have set almost every draw wrong.
+
+**It transfers, and it transfers without retraining.** On the same judging
+instrument used throughout the project, the ported floor scores 50.0 percent
+balanced accuracy on dev and 51.7 percent on the frozen bench split, against the
+ELI5 floor's 57.9. The honest reading is floor parity, not victory. At 140
+documents over three passes, "at chance" is only pinned to within about eight
+points, so 51.7 and 57.9 are not separated by this measurement, and claiming AITA
+beats ELI5 by six points would be reading noise.
+
+One caveat belongs with that number rather than after it. The false-positive rate
+went up: the judge now calls roughly one genuine 2019 redditor in six an AI, where
+on ELI5 it was five to ten percent. So part of the result is that AITA humans are
+harder to distinguish, not purely that the AI is better. Both classes moved, and
+only one of those movements is an achievement.
+
+**Three fixes, one of which is a good example of the failure mode.** Human posts
+end with a question 83.1 percent of the time; the first generated batch managed
+50.8, a 32-point gap and the clearest miss on the marker list. The cause was not
+the draw, which was already set at the human rate — it was the floor's own
+instruction not to end on a flourish, which the models were obeying over the
+instruction to ask. The fix reconciles the two rather than shouting louder: asking
+the sub whether you were in the wrong is now explicitly exempt from the
+anti-flourish rule, because it is the genre's defining move and not a summarising
+line. That closed the gap to under two points. Separately, one generator's length
+constant was corrected and a second correction is agreed but not yet applied, under
+a tripwire fixed in advance: if a third generator drifts, that is reported as a
+wider band rather than corrected, because fitting a third constant on ten documents
+is fitting noise. And a stock-phrasing prohibition turned out to be pushing the
+models away from "am I the asshole" — the genre's own name — so it is being
+replaced by something that permits the canonical phrase without mandating it.
+
+**The diversity question, and a lesson about cost.** The obvious worry about
+generating 2,900 posts from seven models is that they will all write the same
+story. Most of that is answered by how generation works: the model sees only the
+title, so scenario diversity is inherited from 6,343 genuinely distinct human
+titles, with each model inventing the specifics. A small preview came back clean —
+the AI tracks its own title about as closely as the real posters do, no
+near-duplicate scenarios, and one mild per-model habit of reaching for the same
+character names.
+
+Checking that cheaply turned out to be impossible, and the reason is worth keeping.
+The plan was to generate only the first thirty words of each document and compare
+openers, at roughly a tenth of the cost. It does not work on this roster: the models
+reason before they answer, and reasoning is billed whether or not the output cap
+lets any of it through. Five of seven returned nothing usable and charged full
+price for it. **Length is not a cost lever here; count is.** Any cheap early read
+has to use fewer documents, never shorter ones. So the diversity check will run on
+the corpus's real first third instead — about 1,050 documents, drawn as a seeded
+random third of the frozen question assignment rather than the first third by id,
+because reddit ids sort by date and taking them in order would sample one narrow
+slice of time and make the scenarios look artificially alike.
+
+That generation is running now. The remaining two-thirds are held until the
+diversity result is in.
